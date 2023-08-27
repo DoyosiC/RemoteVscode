@@ -27,7 +27,7 @@ class Tools:
 
                 if keyboard.is_pressed('esc'):
                     self.tello.end()
-                    print("escキーが押されました")
+                    print("[escキーが押されました]")
                     break
                 else:
                     print(f"バッテリー残量: {battery}%")
@@ -35,7 +35,7 @@ class Tools:
                     time.sleep(3)
         except KeyboardInterrupt:
             self.tello.end()
-            print("ユーザーによって中断されました。")
+            print("toolsユーザーによって中断されました。")
     
 
 if __name__ == "__main__":

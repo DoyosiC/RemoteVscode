@@ -631,6 +631,7 @@ class Tello:
             x: 20-500
         """
         self.send_control_command("{} {}".format(direction, x))
+    
 
     def move_up(self, x: int):
         """Fly x cm up.
@@ -1035,6 +1036,7 @@ class Tello:
         host = self.address[0]
         if host in drones:
             del drones[host]
+
 
     def __del__(self):
         self.end()

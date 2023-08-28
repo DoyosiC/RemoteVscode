@@ -1,6 +1,7 @@
 from djitellopy import Tello
 import time
 import keyboard
+import threading
 
 class Tools:
     def __init__(self):
@@ -15,6 +16,17 @@ class Tools:
 # また、スクリプトが実行されると Tools クラスのインスタンスを作成して 
 # status_check メソッドを呼び出すようになります。
     
+    def display_height_periodically(self, interval=3):
+        while True:
+            height = self.tello.get_height()
+            print(f"Current Height: {height} cm")
+            time.sleep(interval)
+    
+    def display_hight(self):
+        self.height_display_thread = threading.Thread(target=self.display_height_periodically)
+        self.height_display_thread.daemon = True
+        self.height_display_thread.start()
+
     def status_check(self):
         """
         バッテリーと高度を3秒ごとにprint表示する。

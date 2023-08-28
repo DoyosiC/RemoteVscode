@@ -1,42 +1,56 @@
 from djitellopy import Tello
-import cv2, math, time
+import time
+import keyboard
+import threading
+class TelloController:
+    MAX_HEIGHT = 200  # cm (Max_2m)
+    MIN_HEIGHT = 15   # cm (Min_15cm)
 
-tello = Tello()
-tello.connect()
+    def __init__(self):
+        self.tello = Tello()
+        self.tello.connect()
+        self.tello.takeoff()  # プログラム開始時に離陸
 
-tello.streamon()
-frame_read = tello.get_frame_read()
+    def move_up(self):
+        height = self.tello.get_height()
+        if 15 <= height <= self.MAX_HEIGHT:
+            self.tello.send_rc_control(0, 0, 20, 0)
+        else:
+            print("Cannot go higher! Already at maximum height.")
 
-tello.takeoff()
-tello.set_speed(30)
+    def move_down(self):
+        height = self.tello.get_height()
+        if 15 <= height <= self.MIN_HEIGHT:
+            self.tello.send_rc_control(0, 0, -15, 0)
+        else:
+            print("Cannot go lower! Already at minimum height.")
 
-try:
-    while True:
-        img = frame_read.frame
-        cv2.imshow("drone", img)
+    def display_height_periodically(self, interval=3):
+        while True:
+            height = self.tello.get_height()
+            print(f"Current Height: {height} cm")
+            time.sleep(interval)
 
-        key = cv2.waitKey(1) & 0xff
-        if key == 27: # ESC
-            break
-        elif key == ord('w'):
-            tello.move_forward(30)
-        elif key == ord('s'):
-            tello.move_back(30)
-        elif key == ord('a'):
-            tello.move_left(30)
-        elif key == ord('d'):
-            tello.move_right(30)
-        elif key == ord('e'):
-            tello.rotate_clockwise(30)
-        elif key == ord('q'):
-            tello.rotate_counter_clockwise(30)
-        elif key == ord('r'):
-            tello.move_up(30)
-        elif key == ord('f'):
-            tello.move_down(30)
-    tello.streamoff()
-    tello.land()
- 
-except KeyboardInterrupt:
-    tello.end()
-    print("ユーザーによって中断されました。")
+    def run(self):
+        try:
+            height_display_thread = threading.Thread(target=self.display_height_periodically)
+            height_display_thread.daemon = True
+            height_display_thread.start()
+
+            while True:
+                if keyboard.is_pressed('esc'):
+                    break
+                elif keyboard.is_pressed('up'):
+                    self.move_up()
+                elif keyboard.is_pressed('down'):
+                    self.move_down()
+            
+            self.tello.land()
+        
+        except KeyboardInterrupt:
+            self.tello.end()
+            print("ユーザーによって中断されました.")
+
+if __name__ == "__main__":
+    controller = TelloController()
+    controller.run()

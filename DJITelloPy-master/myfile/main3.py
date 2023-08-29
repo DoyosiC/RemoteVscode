@@ -1,52 +1,73 @@
 from djitellopy import Tello
+from controls import CTRL
+import time, keyboard
 import cv2
-import keyboard
 
-# # Telloドローンのインスタンスを作成
-# tello = Tello()
 
-# # Telloドローンに接続
-# tello.connect()
-
-# # ビデオストリームを開始
-# tello.streamon()
-
-# # OpenCVのビデオキャプチャオブジェクトを作成
-# cap = cv2.VideoCapture(tello.get_udp_video_address())
-
-# while True:
-#     # フレームをキャプチャ
-#     ret, frame = cap.read()
-
-#     if ret:
-#         # フレームを表示
-#         cv2.imshow('Tello Video Stream', frame)
-
-#     # 'q'キーを押すとループを終了
-#     if cv2.waitKey(1) & 0xFF == ord('q'):
-#         break
-
-# # キャプチャとTelloドローンへの接続を解除
-# cap.release()
-# cv2.destroyAllWindows()
-# tello.streamoff()
-
-# Telloドローンのインスタンスを作成
 tello = Tello()
+tello.connect()
+ctrl = CTRL()
+tello.set_speed(20)
+tello.set_video_bitrate(0)
+time.sleep(1)
+tello.set_video_fps('high')
+time.sleep(1)
 
-# ドローンのビデオストリームを受信するBackgroundFrameReadオブジェクトを作成
-frame_reader = tello.get_frame_read()
 
-# フレーム読み取りを開始
-frame_reader.start()
+tello.streamoff()
+tello.streamon()
+frame_read = tello.get_frame_read()
 
-# メインループでビデオフレームを処理
-while True:
-    frame = frame_reader.frame  # 最新のビデオフレームを取得
-    # ここでフレームを処理する（例：表示、保存、オブジェクト検出）
-    if keyboard.is_pressed('q'):
-        break
+try:
+    # if frame_read.stopped:
+    #     tello.end()
+    # # バッテリー残量を取得
+    #     time.sleep(0.5)
+    #     frame = frame_read.frame
+    #     battery = tello.get_battery()
+    #     temp = tello.get_temperature()
 
-# プログラムの終了時にフレーム読み取りを停止
-frame_reader.stop()
+    #     # バッテリー残量が40％未満の場合は飛行停止
+    #     if battery <= 40:
+    #         print('\033[31m' + "Low battery!! Cannot fly!!" + '\033[0m')
+    #         tello.end()
+    #     else:
+    #         print(f"Battery: {battery}%")
+    #         print(f"Temperature: {temp}°C")
+    #         cv2.imshow("drone",frame)
+    #         time.sleep(2)
 
+    while True:
+        key = cv2.waitKey(1) & 0xff
+        if keyboard.is_pressed('esc'):
+            break
+        elif keyboard.is_pressed('o'):
+            tello.takeoff()
+        elif keyboard.is_pressed('l'):
+            tello.land()
+        elif keyboard.is_pressed('w'):
+            ctrl.ctrl_forward()
+        elif keyboard.is_pressed('s'):
+            ctrl.ctrl_back()
+        elif keyboard.is_pressed('a'):
+            ctrl.ctrl_left()
+        elif keyboard.is_pressed('d'):
+            ctrl.ctrl_right()
+        elif keyboard.is_pressed('up'):
+            ctrl.ctrl_up()
+        elif keyboard.is_pressed('down'):
+            ctrl.ctrl_down()
+        elif keyboard.is_pressed('left'):
+            ctrl.ctrl_yaw(-45)  # 左に45速度
+        elif keyboard.is_pressed('right'):
+            ctrl.ctrl_yaw(45)  # 右に45速度
+
+
+    tello.land()
+    time.sleep(0.5)
+    tello.streamoff()
+    print("Finish!")
+
+except KeyboardInterrupt:
+    tello.end()
+    print("Interrupted by the user.")

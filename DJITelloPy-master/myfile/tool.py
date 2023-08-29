@@ -54,18 +54,3 @@ if __name__ == "__main__":
     tools = Tools()
     tools.status_check()
 
-
-# try :
-#     while True:  
-#         battery = tello.get_battery()
-#         altitude = tello.get_height()
-
-#         if keyboard.is_pressed('esc') :
-#             tello.end()
-#             break
-#         else :
-#             print(f"バッテリー残量:  {battery}%")
-#             print(f"高度：{altitude}%")
-#             time.sleep(3)
-# except KeyboardInterrupt:
-#     tello.end()

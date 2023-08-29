@@ -1,47 +1,31 @@
 from djitellopy import Tello
-from controls import CTRL
-import time, keyboard
+import pygame
+import keyboard
+from time import sleep
+import cv2 
 
-tello = Tello()
-tello.connect()
-ctrl = CTRL()  # Tools クラスのインスタンスを作成
+tel=Tello()
+
+tel.__init__()
+tel.connect()
+tel.streamon()
 
 try:
     while True:
-        battary = tello.get_battery()
-        temp = tello.get_temperature()
-        if battary <= 40 :
-            print('\033[31m'+"Row battary!! Can Not flying!!"+'\033[0m')
+        if keyboard.is_pressed('q'):
             break
         else:
-            print(f"バッテリー残量：{battary}%")
-            print(f"温度：{temp}%")
-            time.sleep(2)
-            tello.takeoff()
-
-        if keyboard.is_pressed('esc'):
-            break
-        elif keyboard.is_pressed('w'):
-            ctrl.ctrl_forward()
-        elif keyboard.is_pressed('s'):
-            ctrl.ctrl_back()
-        elif keyboard.is_pressed('a'):
-            ctrl.ctrl_left()
-        elif keyboard.is_pressed('d'):
-            ctrl.ctrl_right()
-        elif keyboard.is_pressed('up'):
-            ctrl.ctrl_up()
-        elif keyboard.is_pressed('down'):
-            ctrl.ctrl_down()
-        elif keyboard.is_pressed('left'):
-            ctrl.ctrl_yaw(-45)  # 左に 45速度
-        elif keyboard.is_pressed('right'):
-            ctrl.ctrl_yaw(45)  # 右に 45速度 
-        else:
-            ctrl.ctrl_hover()
-    tello.end()
-    print("finish!!")
-            
+            frame = tel.get_frame_read()
+            img = frame.frame
+            img = cv2.namedWindow("drone",cv2.WINDOW_NORMAL)
+            img = cv2.resizeWindow("drone",360,240)
+            cv2.imshow("drone",img)
+            cv2.waitKey(0.7)
+    tel.streamoff()
+    cv2.destroyAllWindows()
+        
 except KeyboardInterrupt:
-    tello.end()
-    print("main2ユーザーによって中断されました.")
+    tel.end()
+    cv2.destroyAllWindows()
+
+

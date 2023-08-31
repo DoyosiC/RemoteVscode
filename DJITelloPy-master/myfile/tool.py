@@ -15,7 +15,7 @@ class Tools:
 # これにより、コードはよりモジュール化され、再利用しやすくなりました。
 # また、スクリプトが実行されると Tools クラスのインスタンスを作成して 
 # status_check メソッドを呼び出すようになります。
-    
+    5
     def display_height_periodically(self, interval=3):
         while True:
             height = self.tello.get_height()

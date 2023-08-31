@@ -44,7 +44,10 @@ class CTRL:
         else:
             print("Cannot go lower! Already at minimum height.")
 
-    def ctrl_yaw(self, yaw):  # Specify yaw angle in degrees
+    def ctrl_yaw_left(self, yaw):  # Specify yaw angle in degrees
+        self.tello.send_rc_control(0, 0, 0, -yaw)
+    
+    def ctrl_yaw_right(self, yaw):  # Specify yaw angle in degrees
         self.tello.send_rc_control(0, 0, 0, yaw)
 
     def ctrl_hover(self):

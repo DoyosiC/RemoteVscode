@@ -29,7 +29,11 @@ void PrintMatrix(matrix_r mat){
 /********************************************/
 void TransposeMatrix(matrix_r src, matrix_r *dst){
   // 関数の中身を記入してください
-  
+  for(int i = 0;i < src.m;i++){
+    for(int j = 0;j < src.n;j++){
+      dst->data[j][i] = src.data[i][j];
+    }
+  }
 }
 
 /*************************************************/
@@ -42,8 +46,26 @@ int MultiplyMatrix(matrix_r src1, matrix_r src2, matrix_r *dst){
   // 関数の中身を記入してください
   // 掛け算ができない場合（要素数の不一致）、-1を返してください
   // 掛け算ができた場合は1を返してください
-
-  return 1;
+  int ans = 0;
+  int aryM[src2.m];
+  int aryN[src2.m];
+  if (src1.n != src2.m){
+    return -1;
+  }else{
+    for(int i=0 ; i < src1.m;i++ ){
+      for(int j=0 ; j < src1.n;j++ ){
+        for(int k=0 ; k < src2.m;k++ ){
+          aryM[k] = src1.data[i][k];
+          aryN[k] = src2.data[k][j];
+        }
+        for(int l=0; l < src1.n; l++){
+          ans += aryM[l]*aryN[l];
+        }
+        dst->data[i][j] = ans;
+      }
+    }
+    return 1;  
+  }
 }
 
 /******************************************/
@@ -55,8 +77,40 @@ int InverseMatrix(matrix_r src, matrix_r *dst){
   // 関数の中身を記入してください
   // 逆行列が計算できない場合（正方行列でない）、-1を返してください
   // 逆行列が計算できた場合は1を返してください
+  // 行列dstのサイズを設定する
+  dst->m = src.m;
+  dst->n = src.n;
 
-  return 1;
+  int sweepM = src.m;
+  int sweepN = src.n;
+  double a=0,b=0;
+  for(int i=0 ;i<src.m ;i++ ){
+    for(int j=0 ;j<src.n ;j++ ){
+      if( i==j ){
+        src.data[sweepM+i][sweepN+j] = 1; 
+      }else{
+        src.data[sweepM+i][sweepN+j] = 0;
+      }
+    }
+  }
+  if (src.m != src.n){
+    return -1;
+  }else{
+    for(int i=0; i < src.m; i++){
+      for(int j=0; j < src.m; j++){
+        a = 1/src.data[i][j];
+        src.data[i][j] *= a;
+        b = -src.data[i][j];
+        src.data[i][j] += b*src.data[i][j];
+      }
+    }
+    for(int i=0; i < src.m; i++){
+      for(int j=0; j < src.m; j++){
+        dst->data[i][j] = src.data[sweepM+i][sweepN+j];
+      }
+    }
+    return 1;
+  }
 }
 
 int main (void){

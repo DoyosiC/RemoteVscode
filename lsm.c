@@ -29,8 +29,15 @@ void PrintMatrix(matrix_r mat){
 /********************************************/
 void TransposeMatrix(matrix_r src, matrix_r *dst){
   // 関数の中身を記入してください
-  for(int i = 0;i < src.m;i++){
-    for(int j = 0;j < src.n;j++){
+  // for(int i = 0;i < src.m;i++){
+  //   for(int j = 0;j < src.n;j++){
+  //     dst->data[j][i] = src.data[i][j];
+  //   }
+  // }
+  dst->m = src.n;
+  dst->n = src.m;
+  for( int i=0; i<dst->m; i++){
+    for(int j=0; j<dst->n; j++){
       dst->data[j][i] = src.data[i][j];
     }
   }
@@ -47,21 +54,27 @@ int MultiplyMatrix(matrix_r src1, matrix_r src2, matrix_r *dst){
   // 掛け算ができない場合（要素数の不一致）、-1を返してください
   // 掛け算ができた場合は1を返してください
   if (src1.n != src2.m) {
+    printf("MulitiplyMatrix Error\n");
     return -1;
   }
   dst->m = src1.m;
   dst->n = src2.n;
   for (int i = 0; i < src1.m; i++) {
     for (int j = 0; j < src2.n; j++) {
-      double sum = 0.0;
-      for (int k = 0; k < src1.n; k++) {
-        sum += src1.data[i][k] * src2.data[k][j];
+      // double sum = 0.0;
+      // for (int k = 0; k < src1.n; k++) {
+      //   sum += src1.data[i][k] * src2.data[k][j];
+      // }
+      // dst->data[i][j] = sum;
+      dst->data[i][j] = 0;
+      for(int k=0;k < src1.n;k++){
+        dst->data[i][j] += src1.data[i][k]*src2.data[k][j];
       }
-      dst->data[i][j] = sum;
     }
   }
   return 1;
 }
+
 
 /******************************************/
 /* 関数InverseMatrix：逆行列を計算する関数 */
@@ -72,12 +85,15 @@ int InverseMatrix(matrix_r src, matrix_r *dst){
   // 関数の中身を記入してください
   // 逆行列が計算できない場合（正方行列でない）、-1を返してください
   // 逆行列が計算できた場合は1を返してください
+  // 行列dstのサイズを設定する
   dst->m = src.m;
   dst->n = src.n;
-
   int sweepM = src.m;
   int sweepN = src.n;
   double a=0,b=0;
+  if (src.m != src.n){
+    return -1;
+  }
   for(int i=0 ;i<src.m ;i++ ){
     for(int j=0 ;j<src.n ;j++ ){
       if( i==j ){
@@ -87,24 +103,20 @@ int InverseMatrix(matrix_r src, matrix_r *dst){
       }
     }
   }
-  if (src.m != src.n){
-    return -1;
-  }else{
-    for(int i=0; i < src.m; i++){
-      for(int j=0; j < src.m; j++){
-        a = 1/src.data[i][j];
-        src.data[i][j] *= a;
-        b = -src.data[i][j];
-        src.data[i][j] += b*src.data[i][j];
-      }
+  for(int i=0; i < src.m; i++){
+    for(int j=0; j < src.m; j++){
+      a = 1/src.data[i][j];
+      src.data[i][j] *= a;
+      b = -src.data[i][j];
+      src.data[i][j] += b*src.data[i][j];
     }
-    for(int i=0; i < src.m; i++){
-      for(int j=0; j < src.m; j++){
-        dst->data[i][j] = src.data[sweepM+i][sweepN+j];
-      }
-    }
-    return 1;
   }
+  for(int i=0; i < src.m; i++){
+    for(int j=0; j < src.m; j++){
+      dst->data[i][j] = src.data[sweepM+i][sweepN+j];
+    }
+  }
+  return 1;
 }
 
 int main (void){

@@ -72,7 +72,6 @@ int InverseMatrix(matrix_r src, matrix_r *dst){
   // 関数の中身を記入してください
   // 逆行列が計算できない場合（正方行列でない）、-1を返してください
   // 逆行列が計算できた場合は1を返してください
-  // 行列dstのサイズを設定する
   dst->m = src.m;
   dst->n = src.n;
 

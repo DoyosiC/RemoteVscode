@@ -46,26 +46,21 @@ int MultiplyMatrix(matrix_r src1, matrix_r src2, matrix_r *dst){
   // 関数の中身を記入してください
   // 掛け算ができない場合（要素数の不一致）、-1を返してください
   // 掛け算ができた場合は1を返してください
-  int ans = 0;
-  int aryM[src2.m];
-  int aryN[src2.m];
-  if (src1.n != src2.m){
+  if (src1.n != src2.m) {
     return -1;
-  }else{
-    for(int i=0 ; i < src1.m;i++ ){
-      for(int j=0 ; j < src1.n;j++ ){
-        for(int k=0 ; k < src2.m;k++ ){
-          aryM[k] = src1.data[i][k];
-          aryN[k] = src2.data[k][j];
-        }
-        for(int l=0; l < src1.n; l++){
-          ans += aryM[l]*aryN[l];
-        }
-        dst->data[i][j] = ans;
-      }
-    }
-    return 1;  
   }
+  dst->m = src1.m;
+  dst->n = src2.n;
+  for (int i = 0; i < src1.m; i++) {
+    for (int j = 0; j < src2.n; j++) {
+      double sum = 0.0;
+      for (int k = 0; k < src1.n; k++) {
+        sum += src1.data[i][k] * src2.data[k][j];
+      }
+      dst->data[i][j] = sum;
+    }
+  }
+  return 1;
 }
 
 /******************************************/

@@ -10,22 +10,17 @@ import controls
 tel=Tello()
 ctrl = controls.CTRL()
 tel.connect()
-print('0')
 sleep(0.5)
-print('0.5')
 tel.streamon()
-sleep(0.5)
-
 
 # トラックバーを作るため，まず最初にウィンドウを生成
 cv2.namedWindow("OpenCV Window")
 
 # トラックバーのコールバック関数は何もしない空の関数
 def nothing(x):
-    pass        # passは何もしないという命令
+    pass
 
 # トラックバーの生成
-    
 cv2.createTrackbar("H_min", "OpenCV Window", 0, 179, nothing)
 cv2.createTrackbar("H_max", "OpenCV Window", 9, 179, nothing)       # Hueの最大値は179
 cv2.createTrackbar("S_min", "OpenCV Window", 128, 255, nothing)
@@ -33,22 +28,21 @@ cv2.createTrackbar("S_max", "OpenCV Window", 255, 255, nothing)
 cv2.createTrackbar("V_min", "OpenCV Window", 128, 255, nothing)
 cv2.createTrackbar("V_max", "OpenCV Window", 255, 255, nothing)
 
+flag = 0
+#Ctrl+cが押されるまでループ
+
 try:
     while True:
         if keyboard.is_pressed('esc'):
             break
         else:
-            flag = None
-            frame_read = tel.get_frame_read()
-            img = frame_read.frame
-            cv2.waitKey(1)
-
-
-            image = cv2.resize(img,dsize=(480,360))
-
-            hsv_image = cv2.cvtColor(image, cv2.COLOR_RGB2HSV)
+            frame = tel.get_frame_read().frame
+            image = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)      # OpenCV用のカラー並びに変換する
+            bgr_image = cv2.resize(image, dsize=(480,360) ) # 画像サイズを半分に変更
+            hsv_image = cv2.cvtColor(bgr_image, cv2.COLOR_BGR2HSV)  # BGR画像 -> HSV画像
 
             # トラックバーの値を取る
+
             h_min = cv2.getTrackbarPos("H_min", "OpenCV Window")
             h_max = cv2.getTrackbarPos("H_max", "OpenCV Window")
             s_min = cv2.getTrackbarPos("S_min", "OpenCV Window")
@@ -56,14 +50,13 @@ try:
             v_min = cv2.getTrackbarPos("V_min", "OpenCV Window")
             v_max = cv2.getTrackbarPos("V_max", "OpenCV Window")
 
-
-
             # inRange関数で範囲指定２値化
             bin_image = cv2.inRange(hsv_image, (h_min, s_min, v_min), (h_max, s_max, v_max)) # HSV画像なのでタプルもHSV並び
 
             # bitwise_andで元画像にマスクをかける -> マスクされた部分の色だけ残る
             masked_image = cv2.bitwise_and(hsv_image, hsv_image, mask=bin_image)
 
+            # ラベリング結果書き出し用に画像を準備
             out_image = masked_image
 
             # 面積・重心計算付きのラベリング処理を行う
@@ -73,6 +66,7 @@ try:
             num_labels = num_labels - 1
             stats = np.delete(stats, 0, 0)
             center = np.delete(center, 0, 0)
+
 
             if num_labels >= 1:
                 # 面積最大のインデックスを取得
@@ -98,7 +92,8 @@ try:
 
                 if flag == 1:
                     a = b = c = d = 0
-                    # P制御の式(Kpゲインはとりあえず1.0)
+
+          # P制御の式(Kpゲインはとりあえず1.0)
                     dx = 1.0 * (240 - mx)       # 画面中心との差分
 
                     # 旋回方向の不感帯を設定
@@ -112,12 +107,13 @@ try:
                     print('dx=%f'%(dx) )
                     tel.send_rc_control(int(a), int(b), int(c), int(d))
 
-            cv2.imshow("drone",out_image)
+            cv2.waitKey(1)
+            # (X)ウィンドウに表示
+            cv2.imshow('OpenCV Window', out_image)  # ウィンドウに表示するイメージを変えれば色々表示できる
 
             if keyboard.is_pressed('q'):
                 break
             elif keyboard.is_pressed('t'):
-                flag = 0
                 tel.takeoff()             # 離陸
             elif keyboard.is_pressed('l'):
                 tel.land()                # 着陸
@@ -129,21 +125,29 @@ try:
                 ctrl.ctrl_left()        # 左移動
             elif keyboard.is_pressed('d'):
                 ctrl.ctrl_right()       # 右移動
-            elif keyboard.is_pressed('q'):
+            elif keyboard.is_pressed('left'):
                 ctrl.ctrl_yaw_left()        # 左旋回
-            elif keyboard.is_pressed('e'):
+            elif keyboard.is_pressed('right'):
                 ctrl.ctrl_yaw_right()        # 右旋回
-            elif keyboard.is_pressed('r'):
-                ctrl.ctrl_up(0.3)          # 上昇
-            elif keyboard.is_pressed('f'):
-                ctrl.ctrl_down(0.3)        # 下降
+            elif keyboard.is_pressed('up'):
+                ctrl.ctrl_up()          # 上昇
+            elif keyboard.is_pressed('down'):
+                ctrl.ctrl_down()        # 下降
             elif keyboard.is_pressed('1'):
-                flag = 1                    # 追跡モードON
+                flag = 1
+                sleep(0.6)
+                print("Prees 1  treas ON!!")                    # 追跡モードON
             elif keyboard.is_pressed('2'):
                 flag = 0                    # 追跡モードOFF
+                sleep(0.9)
+                print("Pressed 0 trease OFF!!")
+            else:
+                ctrl.ctrl_hover()
+
 
     tel.streamoff()
-    tel.end()
+    tel.land()
+    sleep(0.6)
     cv2.destroyAllWindows()
         
 except (KeyboardInterrupt, SystemExit):

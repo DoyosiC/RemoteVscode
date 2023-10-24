@@ -19,6 +19,7 @@ while True:
         break
 
 # 後片付け
+
 tello.streamoff()
 tello.end()
 cv2.destroyAllWindows()

@@ -3,45 +3,34 @@ from controls import CTRL
 import time, keyboard
 import cv2
 
-
 tello = Tello()
-tello.connect()
 ctrl = CTRL()
-tello.set_speed(20)
-tello.set_video_bitrate(0)
-time.sleep(1)
-tello.set_video_fps('high')
-time.sleep(1)
+tello.connect()
+tello.turn_motor_on()
 
 
 tello.streamoff()
 tello.streamon()
-frame_read = tello.get_frame_read()
 
 try:
-    # if frame_read.stopped:
-    #     tello.end()
-    # # バッテリー残量を取得
-    #     time.sleep(0.5)
-    #     frame = frame_read.frame
-    #     battery = tello.get_battery()
-    #     temp = tello.get_temperature()
-
-    #     # バッテリー残量が40％未満の場合は飛行停止
-    #     if battery <= 40:
-    #         print('\033[31m' + "Low battery!! Cannot fly!!" + '\033[0m')
-    #         tello.end()
-    #     else:
-    #         print(f"Battery: {battery}%")
-    #         print(f"Temperature: {temp}°C")
-    #         cv2.imshow("drone",frame)
-    #         time.sleep(2)
-
+    frag = 0
     while True:
-        key = cv2.waitKey(1) & 0xff
+        frame_read = tello.get_frame_read()
+        img = frame_read.frame
+        img = cv2.resize(img,(480,360))
+        image = cv2.cvtColor(img,cv2.COLOR_BGR2RGB)
+        cv2.waitKey(1)
+        cv2.imshow("drone",image)
+
         if keyboard.is_pressed('esc'):
             break
-        elif keyboard.is_pressed('o'):
+        elif keyboard.is_pressed('q') & frag == 1:
+            tello.land()
+            break
+        elif keyboard.is_pressed('t'):
+            tello.turn_motor_off()
+            frag = 1
+            time.sleep(1)
             tello.takeoff()
         elif keyboard.is_pressed('l'):
             tello.land()
@@ -58,16 +47,20 @@ try:
         elif keyboard.is_pressed('down'):
             ctrl.ctrl_down()
         elif keyboard.is_pressed('left'):
-            ctrl.ctrl_yaw(-45)  # 左に45速度
+            ctrl.ctrl_yaw_left()  # 左に45速度
         elif keyboard.is_pressed('right'):
-            ctrl.ctrl_yaw(45)  # 右に45速度
+            ctrl.ctrl_yaw_right()  # 右に45速度
+        else:
+            ctrl.ctrl_hover()
 
 
-    tello.land()
     time.sleep(0.5)
     tello.streamoff()
+    cv2.destroyAllWindows()
+    
     print("Finish!")
 
 except KeyboardInterrupt:
     tello.end()
+    cv2.destroyAllWindows()
     print("Interrupted by the user.")

@@ -13,10 +13,7 @@ from .enforce_types import enforce_types
 
 import av
 import numpy as np
-
-
-import sys #プログラムを強制終了することを目的とするモジュール　by add.YD
-import re  # 文字列から数字を取得するために使用するモジュール   by add.YD
+import re
 
 
 threads_initialized = False
@@ -103,9 +100,9 @@ class Tello:
     def __init__(self,
                  host=TELLO_IP,
                  retry_count=RETRY_COUNT,
-                 vs_udp=VS_UDP_PORT,
-                 langage = "jp"):
+                 vs_udp=VS_UDP_PORT):
 
+        print("code up the __init__")
         global threads_initialized, client_socket, drones
 
         self.address = (host, Tello.CONTROL_UDP_PORT)
@@ -113,8 +110,6 @@ class Tello:
         self.retry_count = retry_count
         self.last_received_command_timestamp = time.time()
         self.last_rc_control_timestamp = time.time()
-
-        self.lang = langage #レスポンス時の使用言語　by add.YD
 
         if not threads_initialized:
             # Run Tello command responses UDP receiver on background
@@ -125,22 +120,17 @@ class Tello:
             response_receiver_thread.start()
 
             # Run state UDP receiver on background
-            # _recv_thread の並列実行のためのセットアップ
             state_receiver_thread = Thread(target=Tello.udp_state_receiver)
             state_receiver_thread.daemon = True
             state_receiver_thread.start()
 
             threads_initialized = True
-            
-        # add.YD
-        #self.status_cheak()
 
         drones[host] = {'responses': [], 'state': {}}
 
         self.LOGGER.info("Tello instance was initialized. Host: '{}'. Port: '{}'.".format(host, Tello.CONTROL_UDP_PORT))
 
         self.vs_udp_port = vs_udp
-
 
 
     def change_vs_udp(self, udp_port):
@@ -631,7 +621,6 @@ class Tello:
             x: 20-500
         """
         self.send_control_command("{} {}".format(direction, x))
-    
 
     def move_up(self, x: int):
         """Fly x cm up.
@@ -1037,12 +1026,12 @@ class Tello:
         if host in drones:
             del drones[host]
 
-
     def __del__(self):
         self.end()
 
 
 class BackgroundFrameRead:
+    
     """
     This class read frames using PyAV in background. Use
     backgroundFrameRead.frame to get the current frame.

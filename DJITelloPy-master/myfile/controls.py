@@ -9,6 +9,7 @@ class CTRL:
     MAX_HEIGHT = 200  # cm (Max_2m)
     MIN_HEIGHT = 15   # cm (Min_15cm)
     s = DRONE_SPEED
+    yaw = s
     u = s-30  #20
     d = s-35  #15
     def __init__(self) -> None:
@@ -44,11 +45,11 @@ class CTRL:
         else:
             print("Cannot go lower! Already at minimum height.")
 
-    def ctrl_yaw_left(self, yaw):  # Specify yaw angle in degrees
-        self.tello.send_rc_control(0, 0, 0, -yaw)
+    def ctrl_yaw_left(self):  # Specify yaw angle in degrees
+        self.tello.send_rc_control(0, 0, 0, -self.yaw)
     
-    def ctrl_yaw_right(self, yaw):  # Specify yaw angle in degrees
-        self.tello.send_rc_control(0, 0, 0, yaw)
+    def ctrl_yaw_right(self):  # Specify yaw angle in degrees
+        self.tello.send_rc_control(0, 0, 0, self.yaw)
 
     def ctrl_hover(self):
         self.tello.send_rc_control(0, 0, 0, 0)

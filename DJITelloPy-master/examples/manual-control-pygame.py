@@ -9,8 +9,6 @@ import time
 S = 60
 # Frames per second of the pygame window display
 # A low number also results in input lag, as input information is processed once per frame.
-# pygame窗口显示的帧数
-# 较低的帧数会导致输入延迟，因为一帧只会处理一次输入信息
 FPS = 120
 
 
@@ -24,33 +22,21 @@ class FrontEnd(object):
             - A and D: Counter clockwise and clockwise rotations (yaw)
             - W and S: Up and down.
 
-        保持Tello画面显示并用键盘移动它
-        按下ESC键退出
-        操作说明：
-            T：起飞
-            L：降落
-            方向键：前后左右
-            A和D：逆时针与顺时针转向
-            W和S：上升与下降
 
     """
 
     def __init__(self):
         # Init pygame
-        # 初始化pygame
         pygame.init()
 
         # Creat pygame window
-        # 创建pygame窗口
         pygame.display.set_caption("Tello video stream")
         self.screen = pygame.display.set_mode([960, 720])
 
         # Init Tello object that interacts with the Tello drone
-        # 初始化与Tello交互的Tello对象
         self.tello = Tello()
 
         # Drone velocities between -100~100
-        # 无人机各方向速度在-100~100之间
         self.for_back_velocity = 0
         self.left_right_velocity = 0
         self.up_down_velocity = 0

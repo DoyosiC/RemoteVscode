@@ -1,0 +1,77 @@
+<?xml version="1.0" ?>
+<annotation>
+    
+    
+    <folder>od_dogs</folder>
+    
+    
+    <filename>mono08289434-211001-02.webp</filename>
+    
+    
+    <path>C:\Users\nakata\Python\myfolder\od_test\od_dogs\mono08289434-211001-02.webp</path>
+    
+    
+    <source>
+        
+        
+        <database>Unknown</database>
+        
+    
+    </source>
+    
+    
+    <size>
+        
+        
+        <width>350</width>
+        
+        
+        <height>350</height>
+        
+        
+        <depth>3</depth>
+        
+    
+    </size>
+    
+    
+    <segmented>0</segmented>
+    
+    
+    <object>
+        
+        
+        <name>poll</name>
+        
+        
+        <pose>Unspecified</pose>
+        
+        
+        <truncated>0</truncated>
+        
+        
+        <difficult>0</difficult>
+        
+        
+        <bndbox>
+            
+            
+            <xmin>59</xmin>
+            
+            
+            <ymin>3</ymin>
+            
+            
+            <xmax>254</xmax>
+            
+            
+            <ymax>349</ymax>
+            
+        
+        </bndbox>
+        
+    
+    </object>
+    
+
+</annotation>

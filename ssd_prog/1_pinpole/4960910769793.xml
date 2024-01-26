@@ -1,0 +1,77 @@
+<?xml version="1.0" ?>
+<annotation>
+    
+    
+    <folder>od_dogs</folder>
+    
+    
+    <filename>4960910769793.jpg</filename>
+    
+    
+    <path>C:\Users\nakata\Python\myfolder\od_test\od_dogs\4960910769793.jpg</path>
+    
+    
+    <source>
+        
+        
+        <database>Unknown</database>
+        
+    
+    </source>
+    
+    
+    <size>
+        
+        
+        <width>500</width>
+        
+        
+        <height>500</height>
+        
+        
+        <depth>3</depth>
+        
+    
+    </size>
+    
+    
+    <segmented>0</segmented>
+    
+    
+    <object>
+        
+        
+        <name>poll</name>
+        
+        
+        <pose>Unspecified</pose>
+        
+        
+        <truncated>0</truncated>
+        
+        
+        <difficult>0</difficult>
+        
+        
+        <bndbox>
+            
+            
+            <xmin>0</xmin>
+            
+            
+            <ymin>2</ymin>
+            
+            
+            <xmax>494</xmax>
+            
+            
+            <ymax>494</ymax>
+            
+        
+        </bndbox>
+        
+    
+    </object>
+    
+
+</annotation>

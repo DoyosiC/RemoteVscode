@@ -13,7 +13,6 @@ from .enforce_types import enforce_types
 
 import av
 import numpy as np
-import re
 
 
 threads_initialized = False
@@ -43,7 +42,8 @@ class Tello:
 
     # Video stream, server socket
     VS_UDP_IP = '0.0.0.0'
-    VS_UDP_PORT = 11111
+    DEFAULT_VS_UDP_PORT = 11111
+    VS_UDP_PORT = DEFAULT_VS_UDP_PORT
 
     CONTROL_UDP_PORT = 8889
     STATE_UDP_PORT = 8890
@@ -102,7 +102,6 @@ class Tello:
                  retry_count=RETRY_COUNT,
                  vs_udp=VS_UDP_PORT):
 
-        print("code up the __init__")
         global threads_initialized, client_socket, drones
 
         self.address = (host, Tello.CONTROL_UDP_PORT)
@@ -587,13 +586,15 @@ class Tello:
         """Turn on video streaming. Use `tello.get_frame_read` afterwards.
         Video Streaming is supported on all tellos when in AP mode (i.e.
         when your computer is connected to Tello-XXXXXX WiFi ntwork).
-        Currently Tello EDUs do not support video streaming while connected
-        to a WiFi-network.
+        Tello EDUs support video streaming while connected to a
+        WiFi-network via SDK 3.
 
         !!! Note:
             If the response is 'Unknown command' you have to update the Tello
             firmware. This can be done using the official Tello app.
         """
+        if self.DEFAULT_VS_UDP_PORT != self.vs_udp_port:
+            self.change_vs_udp(self.vs_udp_port)
         self.send_control_command("streamon")
         self.stream_on = True
 
@@ -719,7 +720,7 @@ class Tello:
         self.send_control_command(cmd)
 
     def curve_xyz_speed(self, x1: int, y1: int, z1: int, x2: int, y2: int, z2: int, speed: int):
-        """Fly to x2 y2 z2 in a curve via x2 y2 z2. Speed defines the traveling speed in cm/s.
+        """Fly to x2 y2 z2 in a curve via x1 y1 z1. Speed defines the traveling speed in cm/s.
 
         - Both points are relative to the current position
         - The current position and both points must form a circle arc.
@@ -752,7 +753,7 @@ class Tello:
         self.send_control_command(cmd)
 
     def curve_xyz_speed_mid(self, x1: int, y1: int, z1: int, x2: int, y2: int, z2: int, speed: int, mid: int):
-        """Fly to x2 y2 z2 in a curve via x2 y2 z2. Speed defines the traveling speed in cm/s.
+        """Fly to x2 y2 z2 in a curve via x1 y1 z1. Speed defines the traveling speed in cm/s.
 
         - Both points are relative to the mission pad with id mid.
         - The current position and both points must form a circle arc.
@@ -1031,7 +1032,6 @@ class Tello:
 
 
 class BackgroundFrameRead:
-    
     """
     This class read frames using PyAV in background. Use
     backgroundFrameRead.frame to get the current frame.

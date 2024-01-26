@@ -31,6 +31,18 @@ class CTRL:
     def ctrl_right(self):  # right
         self.tello.send_rc_control(self.s, 0, 0, 0)
 
+    def ctrl_clock_one(self):
+        self.tello.go_xyz_speed(self.s, self.s, 0, 0)
+
+    def ctrl_clock_five(self):
+        self.tello.go_xyz_speed(self.s, -self.s, 0, 0)
+
+    def ctrl_clock_seven(self):
+        self.tello.go_xyz_speed(-self.s, -self.s, 0, 0)
+
+    def ctrl_clock_eleven(self):
+        self.tello.go_xyz_speed(-self.s, self.s, 0, 0)
+
     def ctrl_up(self):
         height = self.tello.get_height()
         if 15 <= height <= self.MAX_HEIGHT:

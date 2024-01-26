@@ -114,21 +114,29 @@ try:
             if keyboard.is_pressed('q'):
                 break
             elif keyboard.is_pressed('t'):
-                tel.takeoff()             # 離陸
+                tel.takeoff()                   # 離陸
             elif keyboard.is_pressed('l'):
-                tel.land()                # 着陸
+                tel.land()                      # 着陸
             elif keyboard.is_pressed('w'):
-                ctrl.ctrl_forward()     # 前進
+                ctrl.ctrl_forward()             # 前進
             elif keyboard.is_pressed('s'):
-                ctrl.ctrl_back()    # 後進
+                ctrl.ctrl_back()                # 後進
             elif keyboard.is_pressed('a'):
-                ctrl.ctrl_left()        # 左移動
+                ctrl.ctrl_left()                # 左移動
             elif keyboard.is_pressed('d'):
-                ctrl.ctrl_right()       # 右移動
+                ctrl.ctrl_right()               # 右移動
             elif keyboard.is_pressed('left'):
-                ctrl.ctrl_yaw_left()        # 左旋回
+                ctrl.ctrl_yaw_left()            # 左旋回
             elif keyboard.is_pressed('right'):
-                ctrl.ctrl_yaw_right()        # 右旋回
+                ctrl.ctrl_yaw_right()           # 右旋回
+            # elif keyboard.is_pressed('w' and 'd'):  
+            #     ctrl.ctrl_clock_one()           #前右
+            # elif keyboard.is_pressed('w' and 'a'):
+            #     ctrl.ctrl_clock_eleven()        #前左
+            # elif keyboard.is_pressed('s' and 'd'):
+            #     ctrl.ctrl_clock_five()          #後ろ右
+            # elif keyboard.is_pressed('s' and 'a'):
+            #     ctrl.ctrl_clock_seven()         #後ろ左
             elif keyboard.is_pressed('up'):
                 ctrl.ctrl_up()          # 上昇
             elif keyboard.is_pressed('down'):
